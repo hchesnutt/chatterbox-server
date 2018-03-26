@@ -12,8 +12,32 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+let messages = [{
+  username: 'fred',
+  text: 'howdy doody',
+  room: null
+}];
+
 module.exports.requestHandler = function(request, response) {
-  console.log('request:', request);
+  const {url} = request;
+  const requestHeaders = request.headers;
+  const method = requestHeaders['access-control-request-method'];
+  // console.log('method:', method);
+  // console.log('url:', url);
+  // console.log('headers:', requestHeaders);
+  if (method === 'GET') {
+    response.write(messages);
+  }
+  if (method === 'POST') {
+    let body = [];
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    }).on('end', () => {
+      body = Buffer.concat(body).toString();
+    });
+    console.log('body:', body);
+  }
+
   // Request and Response come from node's http module.
   //
   // They include information about both the incoming request, such as
@@ -53,7 +77,7 @@ module.exports.requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end('Hello, World!');
+  response.end();
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
