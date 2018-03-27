@@ -31,6 +31,7 @@
     ]
   },
   "dependencies": {
+    "live-server": "^1.2.0",
     "underscore": "^1.8.3"
   }
 }
