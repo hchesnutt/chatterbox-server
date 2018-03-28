@@ -62,6 +62,9 @@ var app = {
       type: 'GET',
       data: { order: '-createdAt' },
       success: function (data) {
+        console.log(data);
+        data = JSON.parse(data);
+        console.log(data);
         // Don't bother if we have nothing to work with
         if (!data.results || !data.results.length) { return; }
         // Store messages for caching later

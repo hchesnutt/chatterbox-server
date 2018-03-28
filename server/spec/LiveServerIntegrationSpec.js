@@ -9,7 +9,7 @@ describe('server', function() {
     });
   });
 
-  it('should send back parsable stringified JSON', function(done) {
+  it('should send x parsable stringified JSON', function(done) {
     request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
       expect(JSON.parse.bind(this, body)).to.not.throw();
       done();
@@ -70,6 +70,34 @@ describe('server', function() {
     request('http://127.0.0.1:3000/arglebargle', function(error, response, body) {
       expect(response.statusCode).to.equal(404);
       done();
+    });
+  });
+  
+  it('should respond with messages in the order they were created', function(done) {
+    var requestParams1 = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Jono',
+        text: 'I\'m the first message!'}
+    };
+    
+    var requestParams2 = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Jono',
+        text: 'I\'m the second message!'}
+    };
+
+    request(requestParams1, function(error, response, body) {
+      request(requestParams2, function(error, response, body) {
+        // Now if we request the log, those messages we posted should be in order:
+        request('http://127.0.0.1:3000/classes/messages', function(error, response, body) {
+          var messages = JSON.parse(body).results;
+          expect(messages[0].text).to.equal('I\'m the second message!');
+          expect(messages[1].text).to.equal('I\'m the first message!');
+          done();
+        });
+      })
     });
   });
 

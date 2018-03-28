@@ -1,0 +1,2 @@
+why don't we see an OPTIONS request anymore?
+promises or async/await for chaining of async functions.
